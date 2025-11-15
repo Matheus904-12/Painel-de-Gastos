@@ -1,0 +1,613 @@
+/* --- CSS Variables (Theme) --- */
+:root {
+    --bg-primary: #181825;
+    --bg-secondary: #23232a;
+    --bg-tertiary: #282834;
+    --border-color: #353545;
+    --text-primary: #e2e2e2;
+    --text-secondary: #b7b7d7;
+    --accent-color: #a78bfa;
+    --accent-color-dark: #23232a;
+    --success-color: #43ea7f;
+    --warning-color: #ffe066;
+    --danger-color: #ff6b6b;
+    --pink-color: #ff6bcb;
+    --blue-color: #5ad1fa;
+
+    --font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    --shadow-sm: 0 1px 4px rgba(0,0,0,0.12);
+    --shadow-md: 0 2px 8px rgba(0,0,0,0.18);
+    --shadow-lg: 0 4px 24px rgba(0,0,0,0.18);
+    --shadow-xl: 0 8px 32px rgba(0,0,0,0.28);
+    --shadow-inner: 0 2px 8px #a78bfa44;
+}
+
+/* --- Global Styles --- */
+body {
+    font-family: var(--font-family);
+    margin: 0;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    scroll-behavior: smooth;
+}
+
+main {
+    padding-top: 80px; /* Offset for fixed navbar */
+}
+
+/* --- Welcome Loading Screen --- */
+.welcome-loading {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--bg-primary);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: opacity 0.7s cubic-bezier(.4,0,.2,1);
+}
+.welcome-loading.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+.loading-content {
+    text-align: center;
+}
+.loading-title {
+    color: var(--accent-color);
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    letter-spacing: -1px;
+}
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 6px solid var(--bg-tertiary);
+    border-top: 6px solid var(--accent-color);
+    border-radius: 50%;
+    animation: spin 1.2s linear infinite;
+    margin: 0 auto;
+}
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+
+/* --- Navbar --- */
+.notion-navbar {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    padding: 1.2rem 2.5rem;
+    box-shadow: var(--shadow-md);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1500;
+    width: 100%;
+    box-sizing: border-box;
+}
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+.logo-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    box-shadow: var(--shadow-inner);
+    background: var(--bg-secondary);
+    object-fit: cover;
+}
+.notion-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text-secondary);
+}
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+}
+.navbar a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s;
+}
+.navbar a:hover {
+    background: var(--border-color);
+    color: var(--accent-color);
+}
+.theme-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.3s;
+}
+.theme-toggle-btn:hover {
+    color: var(--accent-color);
+    transform: scale(1.1);
+}
+
+/* --- Sections & Cards --- */
+.notion-section {
+    margin: 2.5rem auto;
+    max-width: 900px;
+    background: var(--bg-tertiary);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    padding: 2.5rem;
+    border: 1px solid var(--border-color);
+}
+.resumo-cards {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+.card {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 1.5rem;
+    font-size: 1.15rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    font-weight: 500;
+    color: var(--text-secondary);
+    flex: 1;
+    text-align: center;
+}
+.card span {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: 0.5rem;
+}
+
+/* --- Headings --- */
+.notion-h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--accent-color);
+}
+.notion-h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--accent-color);
+}
+
+/* --- Buttons --- */
+.notion-btn, .calendar-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    position: relative;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border 0.2s, transform 0.2s;
+    overflow: hidden;
+}
+.notion-btn {
+    background: var(--border-color);
+    color: var(--accent-color);
+    border: 1.5px solid var(--accent-color);
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+}
+.notion-btn:hover {
+    background: var(--accent-color);
+    color: var(--accent-color-dark);
+}
+.icon-add, .icon-arrow {
+    display: inline-flex;
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+}
+.notion-btn:hover .icon-add,
+.calendar-nav-btn:hover .icon-arrow {
+    transform: translateY(-2px) scale(1.1);
+}
+
+/* --- Table --- */
+.notion-table-wrapper {
+    overflow-x: auto;
+}
+.crud-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1.5rem;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+.crud-table th, .crud-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+    vertical-align: middle;
+}
+.crud-table th {
+    background: var(--bg-tertiary);
+    color: var(--accent-color);
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+.crud-table tr:last-child td {
+    border-bottom: none;
+}
+.crud-table tr:hover {
+    background: var(--border-color);
+}
+.crud-table .actions button {
+    background: var(--border-color);
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    margin-right: 0.3rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+}
+.crud-table .actions button:hover {
+    background: var(--accent-color);
+    color: var(--accent-color-dark);
+}
+
+/* --- Modal & Form --- */
+.modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(24, 24, 37, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    transform: scale(0.98);
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    padding: 2vw;
+}
+.modal:not(.hidden) {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+.notion-form {
+    background: var(--bg-tertiary);
+    padding: 2.5rem 3.5rem;
+    border-radius: 22px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+    width: 100%;
+    max-width: 800px;
+    min-width: 600px;
+    min-height: 320px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    border: 1.5px solid var(--accent-color);
+    align-items: flex-start;
+    justify-content: space-between;
+}
+.notion-form h3 {
+    flex-basis: 100%;
+    margin-bottom: 1.2rem;
+    color: var(--accent-color);
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+.notion-form label {
+    flex: 1 1 220px;
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    min-width: 220px;
+    max-width: 320px;
+}
+.form-actions {
+    flex-basis: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    align-items: center;
+}
+.notion-form input, .notion-form select, .notion-form textarea {
+    margin-top: 0.4rem;
+    padding: 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: inherit;
+    transition: border-color 0.3s;
+}
+.notion-form input:focus, .notion-form select:focus, .notion-form textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+@media (max-width: 900px) {
+    .notion-form {
+        flex-direction: column;
+        max-width: 98vw;
+        min-width: 0;
+        padding: 1.5rem;
+        gap: 1.2rem;
+    }
+    .form-actions {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    .notion-form label {
+        min-width: 0;
+        max-width: 100%;
+    }
+}
+
+/* --- Calendar Section --- */
+.calendario-flex {
+    display: flex;
+    gap: 2.5rem;
+    align-items: stretch;
+    justify-content: center;
+}
+.calendario-col-esq {
+    flex: 1.2;
+    min-width: 340px;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+}
+.calendario-col-dir {
+    flex: 1;
+    min-width: 260px;
+    background: var(--bg-secondary);
+    border-radius: 14px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+}
+
+/* Calendar Navigation */
+.calendar-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+.calendar-nav-btn {
+    background: var(--bg-secondary);
+    color: var(--accent-color);
+    border: none;
+    font-size: 1.3rem;
+    border-radius: 8px;
+    padding: 0.3rem 0.8rem;
+}
+.calendar-nav-btn:hover {
+    background: var(--accent-color);
+    color: var(--accent-color-dark);
+}
+.calendar-mes {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent-color);
+}
+
+/* Calendar Grid */
+.notion-calendar {
+    background: var(--bg-secondary);
+    border-radius: 14px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+}
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+.calendar-day, .calendar-header {
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    padding: 0.7rem 0.2rem;
+    text-align: center;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    transition: background 0.3s, color 0.3s, border 0.3s, transform 0.3s;
+}
+.calendar-header {
+    font-weight: 700;
+    background: var(--bg-secondary);
+    color: var(--accent-color);
+    border: none;
+    box-shadow: none;
+}
+.calendar-day:not(.other-month):hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-color);
+}
+.calendar-day.selected {
+    border: 2px solid var(--accent-color);
+    background: var(--bg-tertiary);
+    color: var(--accent-color);
+    box-shadow: 0 0 0 3px #a78bfa44;
+}
+.calendar-day.event {
+    background: var(--accent-color);
+    color: var(--accent-color-dark);
+    font-weight: 600;
+}
+
+/* Calendar Tags */
+.calendar-tags {
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+}
+.tag-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: var(--border-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    border: 2px solid transparent;
+    transition: background 0.3s, color 0.3s, border 0.3s;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.tag-badge.selected {
+    border-color: var(--accent-color);
+    background: var(--bg-secondary);
+    color: var(--accent-color);
+}
+.tag-badge[data-color="verde"] { background: #232e23; color: var(--success-color); }
+.tag-badge[data-color="amarelo"] { background: #2e2e23; color: var(--warning-color); }
+.tag-badge[data-color="rosa"] { background: #2e232e; color: var(--pink-color); }
+.tag-badge[data-color="roxo"] { background: #282834; color: var(--accent-color); }
+.tag-badge[data-color="azul"] { background: #23233a; color: var(--blue-color); }
+
+/* Daily Spending Cards */
+.gastos-dia-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    margin-top: 1rem;
+}
+.gasto-dia-card {
+    background: var(--bg-tertiary);
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    padding: 1rem 1.2rem;
+    color: var(--text-primary);
+    position: relative;
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+.gasto-dia-card:hover {
+    box-shadow: 0 6px 24px #a78bfa44;
+    transform: translateY(-2px) scale(1.02);
+}
+.gasto-dia-card .gasto-nome {
+    font-weight: 600;
+    color: var(--accent-color);
+    font-size: 1.08rem;
+}
+.gasto-dia-card .gasto-valor {
+    color: var(--success-color);
+    font-weight: 500;
+}
+.gasto-dia-card .gasto-categoria {
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 0.2rem;
+    background: var(--border-color);
+    color: var(--warning-color);
+}
+.gasto-dia-card .gasto-status {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+.gasto-dia-card[data-status="pago"] .gasto-status {
+    color: var(--success-color);
+}
+.gasto-dia-card[data-status="pendente"] .gasto-status {
+    color: var(--danger-color);
+}
+
+/* --- Footer --- */
+.site-footer {
+    background: var(--bg-secondary);
+    color: var(--accent-color);
+    text-align: center;
+    padding: 1.5rem 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.12);
+    margin-top: 3rem;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 900px) {
+    .notion-navbar {
+        padding: 1rem 1.5rem;
+    }
+    .navbar ul {
+        display: none; /* Simple responsive solution: hide nav links */
+    }
+    .notion-section {
+        padding: 1.5rem;
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+    .resumo-cards {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .calendario-flex {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 700px) {
+    .notion-form {
+        display: flex;
+        flex-direction: column;
+        max-width: 98vw;
+        min-width: 0;
+        padding: 1.5rem;
+        gap: 1.2rem;
+    }
+    .form-actions {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    .calendario-flex {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Gastos</title>
+    <link rel="shortcut icon" href="logo.svg" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="welcome-loading" class="welcome-loading">
+        <div class="loading-content">
+            <h1 class="loading-title">Bem-vindo ao Painel de Gastos</h1>
+            <div class="loading-spinner" role="status" aria-label="Carregando"></div>
+        </div>
+    </div>
+
+    <header>
+        <nav class="navbar notion-navbar" role="navigation" aria-label="Navegação principal">
+            <div class="logo-area">
+                <img src="logo.svg" alt="Logo Painel de Gastos" class="logo-img" />
+                <h1 class="notion-title">Painel de Gastos</h1>
+            </div>
+            <ul>
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#tabela">Tabela</a></li>
+                <li><a href="#calendario">Calendário</a></li>
+            </ul>
+
+        </nav>
+    </header>
+
+    <main>
+        <section id="dashboard" class="section notion-section" aria-labelledby="dashboard-heading">
+            <h2 id="dashboard-heading" class="notion-h2">Resumo</h2>
+            <div class="resumo-cards notion-cards">
+                <div class="card notion-card">Dívidas<br><span id="total-dividas">R$ 0,00</span></div>
+                <div class="card notion-card">Faturas<br><span id="total-faturas">R$ 0,00</span></div>
+                <div class="card notion-card">Pagamentos<br><span id="total-pagamentos">R$ 0,00</span></div>
+            </div>
+            <button id="btn-adicionar" class="notion-btn">
+                <span class="icon-add" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="11" cy="11" r="10" stroke="currentColor" stroke-width="2"/>
+                        <path d="M11 7V15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M7 11H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                Adicionar Novo
+            </button>
+        </section>
+
+        <section id="tabela" class="section notion-section" aria-labelledby="tabela-heading">
+            <h2 id="tabela-heading" class="notion-h2">Tabela de Gastos</h2>
+            <div class="notion-table-wrapper">
+                <table class="crud-table notion-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Valor</th>
+                            <th>Vencimento</th>
+                            <th>Status</th>
+                            <th>Categoria</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-body">
+                        <!-- Linhas dinâmicas -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="calendario" class="section notion-section calendario-flex" aria-labelledby="calendario-heading">
+            <div class="calendario-col-esq">
+                <h2 id="calendario-heading" class="notion-h2">Calendário de Vencimentos</h2>
+                <div class="calendar-tags" id="calendar-tags" role="toolbar" aria-label="Filtros de categoria"></div>
+                <div class="calendar-nav">
+                    <button id="prev-mes" class="calendar-nav-btn" title="Mês Anterior" aria-label="Mês anterior">
+                        <span class="icon-arrow" aria-hidden="true">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M13 16L7 10L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </button>
+                    <span id="calendar-mes" class="calendar-mes" role="status"></span>
+                    <button id="next-mes" class="calendar-nav-btn" title="Próximo Mês" aria-label="Próximo mês">
+                        <span class="icon-arrow" aria-hidden="true">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+                <div id="calendar" class="notion-calendar" role="grid"></div>
+            </div>
+            <div class="calendario-col-dir">
+                <h3 class="notion-h3">Gastos do Dia</h3>
+                <div id="gastos-dia-cards" class="gastos-dia-cards"></div>
+            </div>
+        </section>
+    </main>
+
+    <div id="modal-form" class="modal hidden" role="dialog" aria-labelledby="modal-heading" aria-modal="true">
+        <form id="form-gasto" class="notion-form">
+            <h3 id="modal-heading" class="notion-h3">Novo Gasto</h3>
+            <label>Nome: <input type="text" name="nome" required></label>
+            <label>Valor: <input type="number" name="valor" required></label>
+            <label>Vencimento: <input type="date" name="vencimento" required></label>
+            <label>Status:
+                <select name="status">
+                    <option value="pendente">Pendente</option>
+                    <option value="pago">Pago</option>
+                </select>
+            </label>
+            <label>Categoria: <input type="text" name="categoria"></label>
+            <label>Observações: <textarea name="obs"></textarea></label>
+            <label>Senha (opcional): <input type="password" name="senha"></label>
+            <div class="form-actions">
+                <button type="submit" class="notion-btn">Salvar</button>
+                <button type="button" id="btn-cancelar" class="notion-btn">Cancelar</button>
+            </div>
+        </form>
+    </div>
+
+    <footer class="site-footer">
+        &copy; 2025 Painel de Gastos. Todos os direitos reservados. Autor: Matheus904-12
+    </footer>
+
+    <script src="gsap.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
