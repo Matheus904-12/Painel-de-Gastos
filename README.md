@@ -36,9 +36,9 @@
 
 ## 📸 Screenshots
 
-![Dashboard](https://remarkable-dodol-b40b94.netlify.app/screenshot-dashboard.png)
-![Modal Horizontal](https://remarkable-dodol-b40b94.netlify.app/screenshot-modal.png)
-![Calendário](https://remarkable-dodol-b40b94.netlify.app/screenshot-calendario.png)
+![Dashboard](https://paineldegastos.netlify.app/screenshot-dashboard.png)
+![Modal Horizontal](https://paineldegastos.netlify.app/screenshot-modal.png)
+![Calendário](https://paineldegastos.netlify.app/screenshot-calendario.png)
 
 ---
 
@@ -86,7 +86,7 @@ Matheus904-12
 ## 🌐 Deploy
 
 Acesse o sistema online:
-[https://remarkable-dodol-b40b94.netlify.app](https://remarkable-dodol-b40b94.netlify.app)
+[https://remarkable-dodol-b40b94.netlify.app](https://paineldegastos.netlify.app)
 
 ---
 
