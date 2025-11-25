@@ -86,7 +86,7 @@ Matheus904-12
 ## 🌐 Deploy
 
 Acesse o sistema online:
-[https://remarkable-dodol-b40b94.netlify.app](https://paineldegastos.netlify.app)
+[https://paineldegastos.netlify.app](https://paineldegastos.netlify.app)
 
 ---
 
