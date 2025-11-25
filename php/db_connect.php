@@ -3,7 +3,7 @@
 $host = 'localhost';
 $user = 'root';
 $pass = '';
-$db = 'painel_gastos';
+$db = 'Painel_de_Gastos';
 
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {
