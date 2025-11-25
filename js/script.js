@@ -61,53 +61,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // State
-    let gastos = [];
-
-    // Substituir toda lógica localStorage por integração PHP
-    function carregarGastos() {
-        ajaxGasto('read', {}, (res) => {
-            gastos = Array.isArray(res) ? res : [];
-            updateTabela();
-            renderCategoriaTags();
-            renderCalendario();
-        });
-    }
-
-    function salvarGasto(data, callback) {
-        ajaxGasto('create', data, (res) => {
-            if (res.success) {
-                showCustomAlert('Gasto salvo!', 'success', 'check_circle');
-                carregarGastos();
-                if (callback) callback();
-            } else {
-                showCustomAlert('Erro ao salvar!', 'error', 'error');
-            }
-        });
-    }
-
-    function atualizarGasto(data, callback) {
-        ajaxGasto('update', data, (res) => {
-            if (res.success) {
-                showCustomAlert('Gasto atualizado!', 'success', 'check_circle');
-                carregarGastos();
-                if (callback) callback();
-            } else {
-                showCustomAlert('Erro ao atualizar!', 'error', 'error');
-            }
-        });
-    }
-
-    function apagarGasto(id, callback) {
-        ajaxGasto('delete', { id }, (res) => {
-            if (res.success) {
-                showCustomAlert('Gasto apagado!', 'success', 'check_circle');
-                carregarGastos();
-                if (callback) callback();
-            } else {
-                showCustomAlert('Erro ao apagar!', 'error', 'error');
-            }
-        });
-    }
+    let gastos = JSON.parse(localStorage.getItem('gastos')) || [];
+    let categorias = new Set(gastos.map(g => g.categoria).filter(Boolean));
+    let categoriaSelecionada = '';
+    let dataAtual = new Date();
+    let gastoEditIndex = null;
 
     // DOM Elements
     const elements = {
@@ -159,7 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.totalPagamentos.textContent = `R$ ${totais.pagamentos.toFixed(2)}`;
     };
 
-    // Atualizar updateTabela para usar gastos vindos do PHP
     const updateTabela = () => {
         elements.tabelaBody.innerHTML = '';
         const filteredGastos = gastos.filter(g => categoriaSelecionada === '' || g.categoria === categoriaSelecionada);
@@ -177,39 +134,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
         filteredGastos.forEach((gasto, idx) => {
             const tr = document.createElement('tr');
-            tr.dataset.index = idx;
-            tr.innerHTML = `
-                <td>${gasto.nome}</td>
-                <td>R$ ${parseFloat(gasto.valor).toFixed(2)}</td>
-                <td>${new Date(gasto.vencimento).toLocaleDateString()}</td>
-                <td class="status-${gasto.status}">${gasto.status}</td>
-                <td><span class="categoria-badge">${gasto.categoria || ''}</span></td>
-                <td class="actions" style="display: flex; gap: 8px; justify-content: center; align-items: center;">
-                    <button class="edit-btn icon-btn" title="Editar">
-                        <span class="material-icons" style="color:#4F8EF7;font-size:22px;">edit</span>
-                    </button>
-                    <button class="delete-btn icon-btn" title="Excluir">
-                        <span class="material-icons" style="color:#F75F4F;font-size:22px;">delete</span>
-                    </button>
-                </td>
-            `;
+            tr.dataset.index = gastos.indexOf(gasto);
+                tr.innerHTML = `
+                    <td>${gasto.nome}</td>
+                    <td>R$ ${parseFloat(gasto.valor).toFixed(2)}</td>
+                    <td>${new Date(gasto.vencimento + 'T00:00:00-03:00').toLocaleDateString()}</td>
+                    <td class="status-${gasto.status}">${gasto.status}</td>
+                    <td><span class="categoria-badge">${gasto.categoria || ''}</span></td>
+                    <td class="actions" style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                        <button class="edit-btn icon-btn" title="Editar">
+                            <span class="material-icons" style="color:#4F8EF7;font-size:22px;">edit</span>
+                        </button>
+                        <button class="delete-btn icon-btn" title="Excluir">
+                            <span class="material-icons" style="color:#F75F4F;font-size:22px;">delete</span>
+                        </button>
+                    </td>
+                `;
             elements.tabelaBody.appendChild(tr);
         });
         updateResumo();
     };
 
-    // Atualizar handleFormSubmit para usar PHP
     const handleFormSubmit = (e) => {
         e.preventDefault();
         const formData = new FormData(elements.formGasto);
         const data = Object.fromEntries(formData.entries());
 
-        if (gastoEditIndex !== null && gastos[gastoEditIndex] && gastos[gastoEditIndex].id) {
-            data.id = gastos[gastoEditIndex].id;
-            atualizarGasto(data, closeModal);
-        } else {
-            salvarGasto(data, closeModal);
+        if (data.categoria && !categorias.has(data.categoria)) {
+            categorias.add(data.categoria);
+            renderCategoriaTags();
         }
+
+        if (gastoEditIndex !== null) {
+            gastos[gastoEditIndex] = data;
+        } else {
+            gastos.push(data);
+        }
+
+        saveData();
+        updateTabela();
+        renderCalendario();
+        closeModal();
     };
 
     const openModal = (gasto, index) => {
@@ -229,9 +194,9 @@ document.addEventListener('DOMContentLoaded', () => {
         gastoEditIndex = null;
     };
 
-    // Atualizar handleTableClick para apagar via PHP
     const handleTableClick = (e) => {
         let btn = e.target;
+        // Se clicou no ícone, sobe para o botão
         if (btn.tagName === 'SPAN' && btn.classList.contains('material-icons')) {
             btn = btn.closest('button');
         }
@@ -243,6 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btn.classList.contains('edit-btn')) {
             openModal(gastos[index], index);
         } else if (btn.classList.contains('delete-btn')) {
+            // Evita múltiplos listeners
             if (btn.classList.contains('confirming')) return;
             btn.classList.add('confirming');
             showCustomAlert(`Clique novamente para confirmar exclusão de "${gastos[index].nome}"`, 'error', 'warning');
@@ -251,10 +217,15 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', function confirmar(e2) {
                 btn.classList.remove('confirming');
                 btn.removeEventListener('click', confirmar);
+                // Recalcula o índice pois a tabela pode ter mudado
                 const trAtual = btn.closest('tr');
                 const idxAtual = trAtual ? parseInt(trAtual.dataset.index, 10) : index;
-                if (!isNaN(idxAtual) && gastos[idxAtual] && gastos[idxAtual].id) {
-                    apagarGasto(gastos[idxAtual].id);
+                if (!isNaN(idxAtual) && gastos[idxAtual]) {
+                    gastos.splice(idxAtual, 1);
+                    saveData();
+                    updateTabela();
+                    renderCalendario();
+                    showCustomAlert('Gasto excluído com sucesso!', 'success', 'check_circle');
                 }
             }, { once: true });
         }
@@ -355,40 +326,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTheme(localStorage.getItem('theme') === 'light');
     };
 
-    // Função AJAX para CRUD com PHP
-function ajaxGasto(action, data = {}, callback) {
-    const formData = new FormData();
-    formData.append('action', action);
-    Object.entries(data).forEach(([key, value]) => formData.append(key, value));
-    fetch('../php/gastos_crud.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.json())
-    .then(callback)
-    .catch(() => showCustomAlert('Erro de conexão com o servidor!', 'error', 'error'));
-}
-
-// Exemplo de uso para criar gasto
-// ajaxGasto('create', { nome: 'Exemplo', valor: 10, vencimento: '2025-11-25', status: 'pendente', categoria: 'Teste', obs: 'Observação' }, (res) => {
-//     if (res.success) showCustomAlert('Gasto salvo!', 'success', 'check_circle');
-// });
-
-// Exemplo de uso para ler gastos
-// ajaxGasto('read', {}, (gastos) => {
-//     console.log(gastos);
-// });
-
-// Exemplo de uso para atualizar gasto
-// ajaxGasto('update', { id: 1, nome: 'Novo nome', valor: 20, vencimento: '2025-12-01', status: 'pago', categoria: 'Nova', obs: 'Alterado' }, (res) => {
-//     if (res.success) showCustomAlert('Gasto atualizado!', 'success', 'check_circle');
-// });
-
-// Exemplo de uso para apagar gasto
-// ajaxGasto('delete', { id: 1 }, (res) => {
-//     if (res.success) showCustomAlert('Gasto apagado!', 'success', 'check_circle');
-// });
-
     // Event Listeners
     elements.btnAdicionar.addEventListener('click', () => openModal(null, null));
     elements.btnCancelar.addEventListener('click', closeModal);
@@ -414,14 +351,15 @@ function ajaxGasto(action, data = {}, callback) {
     });
 
     // Initial Load
-    // Carregar gastos do PHP ao iniciar
     const init = () => {
         animate.loading(() => {
             animate.entry();
             animate.icons();
         });
         setupTheme();
-        carregarGastos();
+        updateTabela();
+        renderCategoriaTags();
+        renderCalendario();
         // Select today by default
         const todayStr = new Date().toISOString().slice(0, 10);
         const todayEl = document.querySelector(`.calendar-day[data-date="${todayStr}"]`);
@@ -433,8 +371,8 @@ function ajaxGasto(action, data = {}, callback) {
         const clockEl = document.getElementById('navbar-clock');
         function updateClock() {
             const now = new Date();
-            const dias = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
-            const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+            const dias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+            const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
             const diaSemana = dias[now.getDay()];
             const dia = String(now.getDate()).padStart(2, '0');
             const mes = meses[now.getMonth()];
@@ -444,7 +382,7 @@ function ajaxGasto(action, data = {}, callback) {
             const seg = String(now.getSeconds()).padStart(2, '0');
             const dateStr = `${dia} de ${mes} de ${ano}`;
             const timeStr = `${hora}:${min}:${seg}`;
-            if (clockEl) clockEl.textContent = `${dateStr} - ${diaSemana} - ${timeStr}`;
+            if (clockEl) clockEl.textContent = `${diaSemana} - ${dateStr} - ${timeStr}`;
         }
         updateClock();
         setInterval(updateClock, 1000);

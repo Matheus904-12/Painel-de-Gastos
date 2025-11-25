@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Gastos</title>
     <link rel="shortcut icon" href="logo.svg" type="image/x-icon">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
+    <div id="custom-alert" class="custom-alert hidden"></div>
     <div id="welcome-loading" class="welcome-loading">
         <div class="loading-content">
             <h1 class="loading-title">Bem-vindo ao Painel de Gastos</h1>
@@ -20,6 +22,9 @@
             <div class="logo-area">
                 <img src="logo.svg" alt="Logo Painel de Gastos" class="logo-img" />
                 <h1 class="notion-title">Painel de Gastos</h1>
+            </div>
+            <div class="navbar-center">
+                <span id="navbar-clock" class="navbar-clock"></span>
             </div>
             <ul>
                 <li><a href="#dashboard">Dashboard</a></li>
@@ -114,8 +119,8 @@
                 </select>
             </label>
             <label>Categoria: <input type="text" name="categoria"></label>
-            <label>Observações: <textarea name="obs"></textarea></label>
             <label>Senha (opcional): <input type="password" name="senha"></label>
+            <label>Observações: <textarea name="obs"></textarea></label>
             <div class="form-actions">
                 <button type="submit" class="notion-btn">Salvar</button>
                 <button type="button" id="btn-cancelar" class="notion-btn">Cancelar</button>
@@ -124,10 +129,10 @@
     </div>
 
     <footer class="site-footer">
-        &copy; 2025 Painel de Gastos. Todos os direitos reservados. Autor: Matheus904-12
+        &copy; 2025 Painel de Gastos. Todos os Direitos Reservados.
     </footer>
 
-    <script src="gsap.min.js"></script>
-    <script src="script.js"></script>
+    <script src="js/gsap.min.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>
