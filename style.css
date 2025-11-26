@@ -554,6 +554,7 @@ main {
     font-size: 0.95rem;
     padding: 0.5rem 0.1rem;
     border-radius: 6px;
+    cursor: pointer;
 }
 .calendar-header {
     font-weight: 700;
@@ -571,6 +572,7 @@ main {
     background: var(--bg-tertiary);
     color: var(--accent-color);
     box-shadow: 0 0 0 3px #a78bfa44;
+    cursor: pointer;
 }
 .calendar-day.event {
     background: var(--accent-color);
@@ -622,19 +624,17 @@ main {
 }
 .gasto-dia-card {
     background: var(--bg-tertiary);
-    border-radius: 10px;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border-color);
-    padding: 1rem 1.2rem;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    border: 1px solid #282828;
     color: var(--text-primary);
     position: relative;
     transition: box-shadow 0.3s, transform 0.3s;
-    padding: 0.7rem;
-    border-radius: 8px;
+    padding: 18px 20px 12px 20px;
+    margin-bottom: 16px;
 }
-.gasto-dia-card:hover {
-    box-shadow: 0 6px 24px #a78bfa44;
-    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 2px 18px rgba(124,108,247,0.10);
+    transform: translateY(-1px) scale(1.01);
 }
 .gasto-dia-card .gasto-nome {
     font-weight: 600;
@@ -908,6 +908,7 @@ body {
     font-size: 0.95rem;
     padding: 0.5rem 0.1rem;
     border-radius: 6px;
+    cursor: pointer;
 }
 .gastos-dia-cards {
     gap: 0.7rem;
@@ -1030,6 +1031,7 @@ body {
         font-size: 1rem;
         padding: 0.7rem 0.2rem;
         border-radius: 8px;
+        cursor: pointer;
     }
     .gastos-dia-cards {
         gap: 1.1rem;

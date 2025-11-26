@@ -61,8 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // State
-    let gastos = JSON.parse(localStorage.getItem('gastos')) || [];
-    let categorias = new Set(gastos.map(g => g.categoria).filter(Boolean));
+    let gastos = [];
+    let categorias = new Set();
     let categoriaSelecionada = '';
     let dataAtual = new Date();
     let gastoEditIndex = null;
@@ -87,6 +87,45 @@ document.addEventListener('DOMContentLoaded', () => {
         themeIcon: document.getElementById('theme-icon'),
     };
 
+        // Funções AJAX para CRUD com PHP
+        const apiUrl = 'php/gastos_crud.php';
+
+        // CREATE
+        async function criarGasto(gasto) {
+            const res = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'create', gasto })
+            });
+            return res.json();
+        }
+
+        // READ
+        async function lerGastos() {
+            const res = await fetch(apiUrl + '?action=read');
+            return res.json();
+        }
+
+        // UPDATE
+        async function atualizarGasto(id, gasto) {
+            const res = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'update', id, gasto })
+            });
+            return res.json();
+        }
+
+        // DELETE
+        async function apagarGasto(id) {
+            const res = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'delete', id })
+            });
+            return res.json();
+        }
+
     // Functions
         // Alert personalizado
         function showCustomAlert(message, type = 'info', icon = 'info') {
@@ -102,6 +141,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 2200);
         }
     const saveData = () => localStorage.setItem('gastos', JSON.stringify(gastos));
+    // Substituir saveData por função que atualiza categorias
+    const updateCategorias = () => {
+        categorias = new Set(gastos.map(g => g.categoria).filter(Boolean));
+    };
 
     const updateResumo = () => {
         const totais = gastos.reduce((acc, g) => {
@@ -160,20 +203,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData(elements.formGasto);
         const data = Object.fromEntries(formData.entries());
 
-        if (data.categoria && !categorias.has(data.categoria)) {
-            categorias.add(data.categoria);
-            renderCategoriaTags();
-        }
-
-        if (gastoEditIndex !== null) {
-            gastos[gastoEditIndex] = data;
+        if (gastoEditIndex !== null && gastos[gastoEditIndex] && gastos[gastoEditIndex].id) {
+            // Atualizar gasto
+            atualizarGasto(gastos[gastoEditIndex].id, data).then(res => {
+                if (res.success) {
+                    showCustomAlert('Gasto atualizado com sucesso!', 'success', 'check_circle');
+                    carregarGastos();
+                } else {
+                    showCustomAlert('Erro ao atualizar gasto!', 'error', 'error');
+                }
+            });
         } else {
-            gastos.push(data);
+            // Criar gasto
+            criarGasto(data).then(res => {
+                if (res.success) {
+                    showCustomAlert('Gasto cadastrado com sucesso!', 'success', 'check_circle');
+                    carregarGastos();
+                } else {
+                    showCustomAlert('Erro ao cadastrar gasto!', 'error', 'error');
+                }
+            });
         }
-
-        saveData();
-        updateTabela();
-        renderCalendario();
         closeModal();
     };
 
@@ -196,7 +246,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleTableClick = (e) => {
         let btn = e.target;
-        // Se clicou no ícone, sobe para o botão
         if (btn.tagName === 'SPAN' && btn.classList.contains('material-icons')) {
             btn = btn.closest('button');
         }
@@ -208,7 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btn.classList.contains('edit-btn')) {
             openModal(gastos[index], index);
         } else if (btn.classList.contains('delete-btn')) {
-            // Evita múltiplos listeners
             if (btn.classList.contains('confirming')) return;
             btn.classList.add('confirming');
             showCustomAlert(`Clique novamente para confirmar exclusão de "${gastos[index].nome}"`, 'error', 'warning');
@@ -217,15 +265,17 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', function confirmar(e2) {
                 btn.classList.remove('confirming');
                 btn.removeEventListener('click', confirmar);
-                // Recalcula o índice pois a tabela pode ter mudado
                 const trAtual = btn.closest('tr');
                 const idxAtual = trAtual ? parseInt(trAtual.dataset.index, 10) : index;
-                if (!isNaN(idxAtual) && gastos[idxAtual]) {
-                    gastos.splice(idxAtual, 1);
-                    saveData();
-                    updateTabela();
-                    renderCalendario();
-                    showCustomAlert('Gasto excluído com sucesso!', 'success', 'check_circle');
+                if (!isNaN(idxAtual) && gastos[idxAtual] && gastos[idxAtual].id) {
+                    apagarGasto(gastos[idxAtual].id).then(res => {
+                        if (res.success) {
+                            showCustomAlert('Gasto excluído com sucesso!', 'success', 'check_circle');
+                            carregarGastos();
+                        } else {
+                            showCustomAlert('Erro ao excluir gasto!', 'error', 'error');
+                        }
+                    });
                 }
             }, { once: true });
         }
@@ -297,11 +347,32 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'gasto-dia-card';
             card.dataset.status = g.status;
+            card.style.boxShadow = '0 2px 12px rgba(0,0,0,0.12)';
+            card.style.borderRadius = '14px';
+            card.style.border = '1px solid #282828';
+            card.style.background = 'rgba(30,30,40,0.98)';
+            card.style.padding = '18px 20px 12px 20px';
+            card.style.marginBottom = '16px';
+            card.style.transition = 'box-shadow 0.3s';
+            card.addEventListener('mouseenter', () => {
+                card.style.boxShadow = '0 4px 24px rgba(124,108,247,0.18)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.boxShadow = '0 2px 12px rgba(0,0,0,0.12)';
+            });
             card.innerHTML = `
-                <strong class="gasto-nome">${g.nome}</strong>
-                <span class="gasto-valor">R$ ${parseFloat(g.valor).toFixed(2)}</span>
-                <span class="gasto-categoria">${g.categoria}</span>
-                <span class="gasto-status">${g.status}</span>
+                <div style="display: flex; align-items: center; gap: 18px; margin-bottom: 6px;">
+                    <span style="display: flex; align-items: center; justify-content: center; background: #222; border-radius: 50%; width: 38px; height: 38px; min-width: 38px;">
+                        <span class="material-icons" style="color: #7c6cf7; font-size: 24px;">account_balance_wallet</span>
+                    </span>
+                    <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
+                        <strong class="gasto-nome" style="font-size: 1.13em; color: #b7aaff; line-height: 1.1;">${g.nome}</strong>
+                        <span class="gasto-valor" style="color: #4af77a; font-weight: bold; font-size: 1.08em; margin-top: 2px;">R$ ${parseFloat(g.valor).toFixed(2)}</span>
+                        <span class="gasto-status" style="color: ${g.status === 'pendente' ? '#F75F4F' : '#4af77a'}; font-weight: 500; font-size: 1em; letter-spacing: 0.5px;">${g.status}</span>
+                    </div>
+                    <span class="gasto-categoria" style="background: #444; color: #ffe08a; border-radius: 8px; padding: 6px 18px; font-size: 0.97em; font-weight: 500; display: flex; align-items: center; justify-content: center; height: 32px;">${g.categoria}</span>
+                </div>
+
             `;
             elements.gastosDiaCards.appendChild(card);
         });
@@ -351,15 +422,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Initial Load
+    // Função para carregar gastos do backend
+    function carregarGastos() {
+        lerGastos().then(res => {
+            if (res.success && Array.isArray(res.gastos)) {
+                gastos = res.gastos;
+                updateCategorias();
+                updateTabela();
+                renderCategoriaTags();
+                renderCalendario();
+            } else {
+                gastos = [];
+                updateCategorias();
+                updateTabela();
+                renderCategoriaTags();
+                renderCalendario();
+            }
+        });
+    }
+
     const init = () => {
         animate.loading(() => {
             animate.entry();
             animate.icons();
         });
         setupTheme();
-        updateTabela();
-        renderCategoriaTags();
-        renderCalendario();
+        carregarGastos();
         // Select today by default
         const todayStr = new Date().toISOString().slice(0, 10);
         const todayEl = document.querySelector(`.calendar-day[data-date="${todayStr}"]`);
@@ -381,8 +469,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const min = String(now.getMinutes()).padStart(2, '0');
             const seg = String(now.getSeconds()).padStart(2, '0');
             const dateStr = `${dia} de ${mes} de ${ano}`;
-            const timeStr = `${hora}:${min}:${seg}`;
-            if (clockEl) clockEl.textContent = `${diaSemana} - ${dateStr} - ${timeStr}`;
+            //const timeStr = `${hora}:${min}:${seg}`;
+            if (clockEl) clockEl.textContent = `${diaSemana} - ${dateStr}`; //`${timeStr}`;
         }
         updateClock();
         setInterval(updateClock, 1000);

@@ -1,4 +1,7 @@
--- MySQL: Criação da tabela gastos
+CREATE DATABASE Painel_de_Gastos;
+
+USE Painel_de_Gastos;
+
 CREATE TABLE IF NOT EXISTS gastos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -8,3 +11,5 @@ CREATE TABLE IF NOT EXISTS gastos (
     categoria VARCHAR(50),
     obs TEXT
 );
+
+SELECT * FROM gastos;
